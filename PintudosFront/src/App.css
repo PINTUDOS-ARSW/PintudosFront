@@ -1,7 +1,7 @@
 .logo {
   width: 440px;  /* Aumenta el tamaño */
   height: 440px;  /* Mantiene la proporción */
-  transform: translateX(40px); /* Mueve la imagen a la derecha */
+  transform: translateX(20px); /* Mueve la imagen a la derecha */
   margin-bottom: -220px;
   margin-top: -200px;
 }
@@ -52,4 +52,30 @@ body {
 
 .finger-paint {
   font-family: 'Finger Paint', cursive;
+}
+.btn_d {
+  color: white;
+  font-size: 18px;
+  font-weight: bold;
+  padding: 12px;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  width: 100%;
+  margin-top: 200px;
+}
+
+.btn_u {
+  color: white;
+  font-size: 18px;
+  font-weight: bold;
+  padding: 12px;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  width: 100%;
+  margin-top: 5px;
+}
+.btn_d:hover, .btn_u:hover {
+  background-color: #f7a83a; 
 }
