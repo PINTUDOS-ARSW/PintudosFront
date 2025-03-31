@@ -1,7 +1,11 @@
-h1 {
-  margin-top: -270px;
-  transform: translateX(100px);;
+.logo {
+  width: 440px;  /* Aumenta el tamaño */
+  height: 440px;  /* Mantiene la proporción */
+  transform: translateX(40px); /* Mueve la imagen a la derecha */
+  margin-bottom: -220px;
+  margin-top: -200px;
 }
+
 .container {
   background-color: #fefefe;
   padding: 20px;
@@ -14,6 +18,10 @@ h1 {
 
 body {
   background-color: #6a0dad; 
+  background-image: url('/Fondo.svg');
+  background-size: 98%;
+  background-repeat: no-repeat;
+  background-position: center;
   margin: 0;
   padding: 0;
   min-height: 100vh;
@@ -40,4 +48,8 @@ body {
   font-weight: bold;
   color: #333;
   margin-top: -30px
+}
+
+.finger-paint {
+  font-family: 'Finger Paint', cursive;
 }
