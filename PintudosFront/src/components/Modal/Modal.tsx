@@ -9,7 +9,7 @@ export default function Modal(props: ModalProps) {
                     <div className="message">Codigo de partida</div>
                     <div className="button">
                         <div className="input-container">
-                            <input type="text" className="input" placeholder="XXXXXX" />
+                            <input type="text" className="input" placeholder="" />
                         <button className="button-close" onClick={() => props.setShow(false)}>
                             Cerrar
                         </button>
