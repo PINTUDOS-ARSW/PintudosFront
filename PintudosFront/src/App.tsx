@@ -2,10 +2,10 @@ import React from 'react';
 import './App.css';
 import Button from './components/Button';
 import Logo from './components/Logo';
-import Modal from './components/Modal';
+import Modal from './components/Modal/Modal';
 
 function App() {
-  const[show, setShow] = React.useState(true);
+  const[show, setShow] = React.useState(false);
   return (
     <div className="flex items-center justify-center min-h-screen bg-purple-600">
       <div className="bg-white p-8 rounded-xl shadow-lg w-96 text-center">
