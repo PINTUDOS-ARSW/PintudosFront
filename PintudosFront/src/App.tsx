@@ -1,7 +1,7 @@
 import React from 'react';
 import './App.css';
-import Button from './components/Button';
-import Logo from './components/Logo';
+import Button from './components/Button/Button';
+import Logo from './components/Logo/Logo';
 import Modal from './components/Modal/Modal';
 
 function App() {
