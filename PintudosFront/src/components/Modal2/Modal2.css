@@ -60,31 +60,17 @@
     cursor: pointer;
     font-family: 'Finger Paint', cursive;
     margin-top: 20px;
+    margin-bottom: 15px;
   }
 
-  .input-container {
+  .numeros {
     display: flex;
-    flex-direction: column;
-    align-items: center;
     justify-content: center;
+    align-items: center;
+    align-items: start;
+    padding: 0.3em;
+    color: black;
+    font-family: 'Finger Paint', cursive;
     margin-top: -40px;
+    margin-bottom: 10px;
   }
-
-  .input {
-    display: block;
-    width: 100%;
-    padding: 8px 16px;
-    line-height: 25px;
-    font-size: 14px;
-    font-weight: 500;
-    font-family: inherit;
-    border-radius: 6px;
-    -webkit-appearance: none;
-    color: var(--input-color);
-    border: 1px solid var(--input-border);
-    background: var(--input-background);
-    transition: border .3s ease;
-    &::placeholder {
-        color: var(--input-placeholder);
-    }
-}
