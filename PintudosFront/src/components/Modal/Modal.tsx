@@ -6,11 +6,14 @@ export default function Modal(props: ModalProps) {
             <div className="background">
                 <div className="window">
                     <div className="title">Unirse a una partida</div>
-                    <div className="message">mensaje</div>
+                    <div className="message">Codigo de partida</div>
                     <div className="button">
+                        <div className="input-container">
+                            <input type="text" className="input" placeholder="XXXXXX" />
                         <button className="button-close" onClick={() => props.setShow(false)}>
-                            cerrar
+                            Cerrar
                         </button>
+                        </div>
                     </div>
                 </div>
             </div>

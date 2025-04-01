@@ -22,11 +22,11 @@
   
   .title {
     height: 3em;
-    background-color: #252525;
+    background-color: #f7a83a;
     color: white;
     font-size: 1.2em;
     font-weight: bold;
-    font-style: italic;
+    font-family: 'Finger Paint', cursive;
     display: flex;
     justify-content: center;
     align-items: center;
@@ -37,10 +37,12 @@
   .message {
     flex: 1;
     display: flex;
-    justify-content: left;
+    justify-content: center;
+    align-items: center;
     align-items: start;
     padding: 0.3em;
     color: black;
+    font-family: 'Finger Paint', cursive;
   }
   
   .button {
@@ -56,4 +58,14 @@
     border: none;
     padding: 0.5em 1em;
     cursor: pointer;
+    font-family: 'Finger Paint', cursive;
+    margin-top: 20px;
+  }
+
+  .input-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    margin-top: -40px;
   }
