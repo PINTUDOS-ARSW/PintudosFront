@@ -126,7 +126,7 @@
   transition: background-color 0.3s;
   font-size: 0.9em;
   position: absolute;
-  right: 500px; /* Posiciona el botón a la derecha del input */
+  right: 510px; /* Posiciona el botón a la derecha del input */
   height: 2.4em;
 }
 .button-join:hover,
