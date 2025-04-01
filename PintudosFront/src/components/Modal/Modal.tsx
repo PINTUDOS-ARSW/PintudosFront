@@ -10,10 +10,11 @@ export default function Modal(props: ModalProps) {
                     <div className="button">
                         <div className="input-container">
                             <input type="text" className="input" placeholder="" />
+                            <button className="button-join">Unirse</button>
+                        </div>
                         <button className="button-close" onClick={() => props.setShow(false)}>
                             Cerrar
                         </button>
-                        </div>
                     </div>
                 </div>
             </div>

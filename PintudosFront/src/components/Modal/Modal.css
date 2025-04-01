@@ -67,7 +67,8 @@
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    margin-top: -40px;
+    margin-top: -80px;
+    margin-bottom: 20px;
 }
 
 .input {
@@ -103,15 +104,35 @@
     padding: 0.4em 0.8em;
     cursor: pointer;
     font-family: 'Finger Paint', cursive;
-    margin-top: 15px;
+    margin-top: 20px;
     border-radius: 5em;
     transition: background-color 0.3s;
     font-size: 0.9em;
+    position: relative;
+    left: -60px; 
 }
 
 .button-close:hover {
     background-color: #f7a83a;
 }
+.button-join {
+  background-color: #f7a83a;
+  color: white;
+  border: none;
+  padding: 0.4em 0.8em;
+  cursor: pointer;
+  font-family: 'Finger Paint', cursive;
+  border-radius: 5em;
+  transition: background-color 0.3s;
+  font-size: 0.9em;
+  position: absolute;
+  right: 500px; /* Posiciona el botón a la derecha del input */
+  height: 2.4em;
+}
+.button-join:hover,
+.button-close:hover {
+    background-color: #f7a83a;
+} 
 
 
   
