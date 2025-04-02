@@ -104,19 +104,19 @@
     padding: 0.4em 0.8em;
     cursor: pointer;
     font-family: 'Finger Paint', cursive;
-    margin-top: 20px;
+    margin-top: 10px;
     border-radius: 5em;
     transition: background-color 0.3s;
     font-size: 0.9em;
     position: relative;
-    left: -60px; 
+    left: -80px; 
 }
 
 .button-close:hover {
-    background-color: #f7a83a;
+    background-color: #000000;
 }
 .button-join {
-  background-color: #f7a83a;
+  background-color: #3af756;
   color: white;
   border: none;
   padding: 0.4em 0.8em;
@@ -129,9 +129,8 @@
   right: 510px; /* Posiciona el botón a la derecha del input */
   height: 2.4em;
 }
-.button-join:hover,
-.button-close:hover {
-    background-color: #f7a83a;
+.button-join:hover {
+    background-color: #38a317;
 } 
 
 
