@@ -6,7 +6,8 @@ export default function Modal2(props: ModalProps) {
             <div className="background1">
                 <div className="window1">
                     <div className="title1">Crear partida</div>
-                    <div className="message1">Codigo de partida</div>
+                    <div className="message1">Este es tu código de partida</div>
+                    <div className="message2">comparte este código con tus amigos</div>
                     <div className="numeros1">123456</div>
                     <div className="button1">
                         <button className="button-close1" onClick={() => props.setShow2(false)}>

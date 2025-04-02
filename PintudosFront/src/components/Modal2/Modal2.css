@@ -44,6 +44,17 @@
     color: black;
     font-family: 'Finger Paint', cursive;
   }
+  .message2 {
+    flex: 1;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    align-items: start;
+    padding: 0.3em;
+    color: black;
+    font-family: 'Finger Paint', cursive;
+    margin-top: -10px;
+  }
   
   .button1 {
     height: 3em;
@@ -78,6 +89,6 @@
     padding: 0.3em;
     color: black;
     font-family: 'Finger Paint', cursive;
-    margin-top: -40px;
+    margin-top: 0px;
     margin-bottom: 10px;
   }
