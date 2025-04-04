@@ -1,54 +1,71 @@
-import React, { use } from 'react';
-import { useEffect, useRef } from 'react';
-function Canvas(){
-    const canvasRef = React.useRef<HTMLCanvasElement>(null);
-    const [dibujando, setDibujando] = React.useState(false);
-    useEffect(() => {
-        const canvas = canvasRef.current;
-        if (canvas) {
-            canvas.width = window.innerWidth - 20;
-            canvas.height = window.innerHeight - 20;
-        }
-},[])
+import React, { useRef, useState, useEffect } from 'react';
 
-    const evtIniciaDibujo = (evt: React.MouseEvent<HTMLCanvasElement>) => {
-        setDibujando(true);
-        evtDibujaCanvas(evt);
+function Canvas() {
+  const canvasRef = useRef<HTMLCanvasElement>(null);
+  const [dibujando, setDibujando] = useState(false);
+  const [posicionAnterior, setPosicionAnterior] = useState<{ x: number; y: number } | null>(null);
+
+  useEffect(() => {
+    const canvas = canvasRef.current;
+    if (canvas) {
+      canvas.width = window.innerWidth - 20;
+      canvas.height = window.innerHeight - 20;
+    }
+  }, []);
+
+  const obtenerCoordenadas = (evt: React.MouseEvent<HTMLCanvasElement>) => {
+    const canvas = canvasRef.current;
+    if (!canvas) return { x: 0, y: 0 };
+    const rect = canvas.getBoundingClientRect();
+    return {
+      x: evt.clientX - rect.left,
+      y: evt.clientY - rect.top,
     };
+  };
 
-    const evtTerminaDibujo = (evt: React.MouseEvent<HTMLCanvasElement>) => {
-        setDibujando(false);
-        evtDibujaCanvas(evt);
+  const evtIniciaDibujo = (evt: React.MouseEvent<HTMLCanvasElement>) => {
+    setDibujando(true);
+    const pos = obtenerCoordenadas(evt);
+    setPosicionAnterior(pos);
+  };
+
+  const evtTerminaDibujo = () => {
+    setDibujando(false);
+    setPosicionAnterior(null);
+  };
+
+  const evtDibujaCanvas = (evt: React.MouseEvent<HTMLCanvasElement>) => {
+    if (!dibujando) return;
+    const canvas = canvasRef.current;
+    const ctx = canvas?.getContext('2d');
+    if (!ctx) return;
+
+    const nuevaPos = obtenerCoordenadas(evt);
+
+    if (posicionAnterior) {
+      ctx.beginPath();
+      ctx.moveTo(posicionAnterior.x, posicionAnterior.y);
+      ctx.lineTo(nuevaPos.x, nuevaPos.y);
+      ctx.strokeStyle = 'black';
+      ctx.lineWidth = 3;
+      ctx.lineCap = 'round';
+      ctx.stroke();
+      ctx.closePath();
     }
 
-    interface CanvasMouseEvent extends React.MouseEvent<HTMLCanvasElement> {
-        clientX: number;
-        clientY: number;
-    }
+    setPosicionAnterior(nuevaPos);
+  };
 
-    const evtDibujaCanvas = (evt: CanvasMouseEvent) => {
-        if (!dibujando) return;
-        const canvas = canvasRef.current;
-        if (!canvas) return;
-        const ctx = canvas.getContext('2d');
-        const mouseX = evt.clientX - canvas.getBoundingClientRect().left;
-        const mouseY = evt.clientY - canvas.getBoundingClientRect().top;
-
-        if (ctx) {
-            ctx.fillStyle = 'black';
-            ctx.fillRect(mouseX, mouseY, 5, 5); // Dibuja un rectángulo de 5x5 píxeles en la posición del mouse
-        }
-    };
-    return (
+  return (
     <canvas
-    ref={canvasRef}
-    style={{border: '1px solid black'
-    , backgroundColor: 'white'}}
-    onMouseDown={evtIniciaDibujo}
-    onMouseMove = {evtDibujaCanvas}
-    onMouseUp={evtTerminaDibujo}>
-    </canvas>
-)}
+      ref={canvasRef}
+      style={{ border: '1px solid black', backgroundColor: 'white' }}
+      onMouseDown={evtIniciaDibujo}
+      onMouseMove={evtDibujaCanvas}
+      onMouseUp={evtTerminaDibujo}
+      onMouseLeave={evtTerminaDibujo}
+    />
+  );
+}
+
 export default Canvas;
-
-
