@@ -45,7 +45,7 @@ export default function Modal(props: ModalProps) {
                 onChange={(e) => setPlayer(e.target.value)}
               />
               <button className="button-join" onClick={handleJoin}>Unirse</button>
-              {show3 && <Wait show3={show3} setShow3={setShow3} />}
+              {show3 && <Wait show3={show3} setShow3={setShow3} roomId={roomId} />}
             </div>
             {!show3 && (
               <button className="button-close" onClick={() => props.setShow(false)}>

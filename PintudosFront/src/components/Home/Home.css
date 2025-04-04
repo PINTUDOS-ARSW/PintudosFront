@@ -1,0 +1,94 @@
+.logo {
+    width: 440px;  /* Aumenta el tamaño */
+    height: 440px;  /* Mantiene la proporción */
+    transform: translateX(20px); /* Mueve la imagen a la derecha */
+    margin-bottom: -220px;
+    margin-top: -200px;
+  }
+  
+  .container {
+    background-color: #fefefe;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
+    width: 400px;
+    margin-top: 130px;
+  }
+  
+  
+  html, body {
+    margin: 0;
+    padding: 0;
+    height: 100%;
+    width: 100%;
+  }
+  
+  .home-background {
+    background-color: #6a0dad;
+    background-image: url('/Fondo.svg');
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-position: center;
+  
+    width: 100vw;
+    height: 100vh;
+  
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+  
+  
+  
+  .title-container {
+    display: flex;
+    justify-content: space-between; /* Separa los títulos a los extremos */
+    margin-top: 20px;
+  }
+  
+  .left-title {
+    font-size: 18px;
+    font-weight: bold;
+    color: #333;
+    margin-top: -30px
+  }
+  
+  .right-title {
+    font-size: 18px;
+    font-weight: bold;
+    color: #333;
+    margin-top: -30px
+  }
+  
+  .finger-paint {
+    font-family: 'Finger Paint', cursive;
+  }
+  .btn_d {
+    background-color: black;
+    color: white;
+    font-size: 18px;
+    font-weight: bold;
+    padding: 12px;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    width: 100%;
+    margin-top: 200px;
+  }
+  
+  .btn_u {
+    background-color: black;
+    color: white;
+    font-size: 18px;
+    font-weight: bold;
+    padding: 12px;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    width: 100%;
+    margin-top: 5px;
+  }
+  .btn_d:hover, .btn_u:hover {
+    background-color: #f7a83a; 
+  }
+  

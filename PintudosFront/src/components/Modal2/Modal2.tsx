@@ -17,6 +17,7 @@ export default function Modal2(props: ModalProps) {
       const newRoomId = Math.floor(100000 + Math.random() * 900000).toString();
       setRoomId(newRoomId);
       createRoom(newRoomId);
+      console.log("✅ Nueva sala creada con ID:", newRoomId);
       props.onRoomCreated?.(newRoomId);
     }
   }, [props.show2, connected]);
