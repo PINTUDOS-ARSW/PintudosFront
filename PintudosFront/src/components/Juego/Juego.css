@@ -1,0 +1,17 @@
+.pantalla-limpia {
+    background-color: white; /* Fondo completamente blanco */
+    color: black;
+    width: 100vw;
+    height: 100vh;
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
+  
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  
+    font-size: 2rem;
+    font-family: sans-serif;
+  }
+  
