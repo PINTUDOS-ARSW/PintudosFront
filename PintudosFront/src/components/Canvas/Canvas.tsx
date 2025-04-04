@@ -59,7 +59,9 @@ function Canvas() {
   return (
     <canvas
       ref={canvasRef}
-      style={{ border: '1px solid black', backgroundColor: 'white' }}
+      style={{ border: '1px solid black', backgroundColor: 'white',
+        cursor: 'crosshair'
+       }}
       onMouseDown={evtIniciaDibujo}
       onMouseMove={evtDibujaCanvas}
       onMouseUp={evtTerminaDibujo}
