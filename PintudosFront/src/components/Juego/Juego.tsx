@@ -1,11 +1,10 @@
 import React from "react";
-import "./Juego.css"; // Asegúrate de tener este archivo CSS para los estilos
-
+import "./Juego.css";
+import Canvas from "../Canvas/Canvas"; // Asegúrate de que la ruta sea correcta
 export default function Juego() {
   return (
-    <div className="pantalla-limpia">
-      {/* Puedes poner aquí lo que necesites, o dejarlo completamente limpio */}
-      <h1>Pantalla limpia</h1>
+    <div className="game-background"> 
+    <Canvas></Canvas>
     </div>
   );
 }

@@ -16,19 +16,29 @@
   }
   
   
-  body {
-    background-color: #6a0dad; 
-    background-image: url('/Fondo.svg');
-    background-size: 98%;
-    background-repeat: no-repeat;
-    background-position: center;
+  html, body {
     margin: 0;
     padding: 0;
-    min-height: 100vh;
+    height: 100%;
+    width: 100%;
+  }
+  
+  .home-background {
+    background-color: #6a0dad;
+    background-image: url('/Fondo.svg');
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-position: center;
+  
+    width: 100vw;
+    height: 100vh;
+  
     display: flex;
     justify-content: center;
     align-items: center;
   }
+  
+  
   
   .title-container {
     display: flex;
