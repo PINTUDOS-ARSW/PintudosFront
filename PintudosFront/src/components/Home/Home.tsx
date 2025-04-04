@@ -4,10 +4,13 @@ import Button from '../Button/Button';
 import Logo from '../Logo/Logo';
 import Modal from '../Modal/Modal';
 import Modal2 from '../Modal2/Modal2';
+import Wait from '../Wait/Wait'; // Asegúrate de importar tu componente Wait
 
 function Home() {
   const [show, setShow] = React.useState(false);
   const [show2, setShow2] = React.useState(false);
+  const [show3, setShow3] = React.useState(false); // este es el del lobby
+  const [roomId, setRoomId] = React.useState(''); // <--- aquí se guarda el ID generado
 
   return (
     <div className="home-background">
@@ -21,9 +24,15 @@ function Home() {
 
       {/* Modales encima de todo */}
       {show && <Modal show={show} setShow={setShow} />}
-      {show2 && <Modal2 show2={show2} setShow2={setShow2} />}
+      {show2 && <Modal2 show2={show2} setShow2={setShow2} onRoomCreated={(id) => {
+        setRoomId(id);         // Guarda el ID generado
+        setShow3(true);        // Muestra la pantalla de espera
+        setShow2(false);       // Cierra el modal de crear partida
+      }} />}
+      {show3 && <Wait show3={show3} setShow3={setShow3} roomId={roomId} />}
     </div>
   );
 }
+
 
 export default Home;

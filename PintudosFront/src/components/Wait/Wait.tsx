@@ -22,7 +22,7 @@ export default function Wait(props: ModalProps) {
         if (jugadores >= 3) {
             // Redirige a /juego luego de 1 segundo
             setTimeout(() => {
-                navigate("/juego");
+                navigate("/juego", { state: { roomId: props.roomId } });
             }, 1000);
         }
     }, [jugadores, navigate]);
@@ -53,4 +53,5 @@ export default function Wait(props: ModalProps) {
 interface ModalProps {
     show3: boolean;
     setShow3(show: boolean): void;
+    roomId: string; // ID de la sala
 }

@@ -29,6 +29,13 @@
     justify-content: center;
     align-items: center;
   }
+  .game-container {
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+    width: 90%;
+    max-width: 1200px;
+  }
   
   .canvas {
     background-color: white;
