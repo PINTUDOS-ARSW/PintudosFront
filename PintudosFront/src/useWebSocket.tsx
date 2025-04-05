@@ -4,7 +4,7 @@ import { Client, IMessage } from "@stomp/stompjs";
 import SockJS from "sockjs-client";
 
 type WebSocketContextType = {
-  createRoom: (roomId: string) => void;
+  createRoom: (roomId: string, player: string) => void;
   joinRoom: (roomId: string, player: string) => void;
   sendMessage: (roomId: string, message: string, type?: "chat" | "trace") => void;
   subscribeToChat: (roomId: string, callback: (msg: string) => void) => void;
@@ -51,10 +51,10 @@ export const WebSocketProvider: React.FC<{ children: React.ReactNode }> = ({ chi
     };
   }, []);
 
-  const createRoom = (roomId: string) => {
+  const createRoom = (roomId: string, player: string) => {
     clientRef.current?.publish({
       destination: "/app/createRoom",
-      body: roomId,
+      body: JSON.stringify({ roomId, player}),
     });
   };
 
@@ -68,11 +68,23 @@ export const WebSocketProvider: React.FC<{ children: React.ReactNode }> = ({ chi
 
   const sendMessage = (
     roomId: string,
-    payload: any,
-    type: "chat" | "trace" = "trace"
+    message: string,
+    type: "chat" | "trace" = "trace",
+    sender?: string // <-- nuevo parámetro para el nombre del remitente
   ) => {
-    const destination = type === "chat" ? `/app/chat/${roomId}` : `/app/trace/${roomId}`;
-    const body = type === "chat" ? JSON.stringify({ message: payload }) : JSON.stringify(payload);
+    const destination =
+      type === "chat" ? `/app/chat/${roomId}` : `/app/trace/${roomId}`;
+  
+    let body;
+  
+    if (type === "chat") {
+      body = JSON.stringify({
+        sender: sender ?? "Anónimo",
+        message: message,
+      });
+    } else {
+      body = JSON.stringify(message);
+    }
   
     clientRef.current?.publish({
       destination,
@@ -104,10 +116,20 @@ export const WebSocketProvider: React.FC<{ children: React.ReactNode }> = ({ chi
   
 
   return (
-    <WebSocketContext.Provider value={{ createRoom, joinRoom, sendMessage, subscribeToChat, subscribeToTraces, connected, subscribeToPlayerCount }}>
+    <WebSocketContext.Provider
+  value={{
+    createRoom,
+    joinRoom,
+    sendMessage,
+    subscribeToChat,
+    subscribeToTraces,
+    connected,
+    subscribeToPlayerCount,
+  }}
+>
+  {children}
+</WebSocketContext.Provider>
 
-      {children}
-    </WebSocketContext.Provider>
   );
 };
 
