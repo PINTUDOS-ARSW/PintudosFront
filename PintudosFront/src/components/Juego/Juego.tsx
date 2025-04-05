@@ -1,3 +1,4 @@
+// src/pages/Juego.tsx
 import React, { useEffect } from "react";
 import { useLocation } from "react-router-dom";
 import "./Juego.css";
@@ -6,17 +7,18 @@ import Chat from "../Chat/Chat";
 
 export default function Juego() {
   const location = useLocation();
-  const { roomId } = location.state || {};
+  const { roomId, player } = location.state || {}; // <- extrae también player
 
   useEffect(() => {
     console.log("🟣 Room ID recibido en Juego:", roomId);
-  }, [roomId]);
-  console.log("roomId recibido en Juego.tsx:", roomId);
+    console.log("🟢 Jugador:", player);
+  }, [roomId, player]);
 
   return (
     <div className="game-background">
-      <Canvas roomId={roomId} />
-      <Chat roomId={roomId} />
+      <h2 className="player-info">Jugador: {player}</h2>
+      <Canvas roomId={roomId} player={player} />
+      <Chat roomId={roomId} username={player} /> {/* <- ✅ corregido aquí */}
     </div>
   );
 }

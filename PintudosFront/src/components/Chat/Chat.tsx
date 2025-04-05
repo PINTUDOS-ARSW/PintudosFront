@@ -5,7 +5,7 @@ import "./Chat.css";
 
 export default function Chat({
   roomId,
-  username, // <- NUEVO
+  username,
 }: {
   roomId: string;
   username: string;
@@ -18,17 +18,13 @@ export default function Chat({
 
   useEffect(() => {
     if (!connected) return;
-  
+
     const subscription = subscribeToChat(roomId, (msg) => {
       setMessages((prev) => [...prev, msg]);
     });
-  
-    console.log("📩 Suscrito al chat en room:", roomId);
-  
-    // Cleanup: cancelar suscripción
+
     return () => {
       subscription?.unsubscribe();
-      console.log("🧹 Cancelada suscripción al chat de", roomId);
     };
   }, [connected, roomId, subscribeToChat]);
 

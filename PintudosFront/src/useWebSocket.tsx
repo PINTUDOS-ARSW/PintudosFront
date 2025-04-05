@@ -101,9 +101,9 @@ export const WebSocketProvider: React.FC<{ children: React.ReactNode }> = ({ chi
   };
   
   const subscribeToChat = (roomId: string, callback: (msg: ChatMessage) => void) => {
-    clientRef.current?.subscribe(`/topic/chat/${roomId}`, (msg: IMessage) => {
+    return clientRef.current?.subscribe(`/topic/chat/${roomId}`, (msg: IMessage) => {
       const data = JSON.parse(msg.body);
-      callback(data); // data debe tener sender, message y timestamp
+      callback(data);
     });
   };
 

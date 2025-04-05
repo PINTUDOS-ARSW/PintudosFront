@@ -3,6 +3,8 @@ import React, { useState } from 'react';
 import './Modal.css';
 import Wait from '../Wait/Wait';
 import  { useWebSocket }  from './../../useWebSocket';
+import { useNavigate } from "react-router-dom";
+
 
 interface ModalProps {
   show: boolean;
@@ -15,12 +17,19 @@ export default function Modal(props: ModalProps) {
   const [show3, setShow3] = useState(false);
   const { joinRoom } = useWebSocket();
 
-  const handleJoin = () => {
-    if (roomId && player) {
-      joinRoom(roomId, player);
-      setShow3(true);
-    }
-  };
+  const navigate = useNavigate(); // justo después de las otras constantes
+
+const handleJoin = () => {
+  if (roomId && player) {
+    joinRoom(roomId, player);
+    navigate("/juego", {
+      state: {
+        roomId,
+        player,
+      },
+    });
+  }
+};
 
   if (props.show) {
     return (
