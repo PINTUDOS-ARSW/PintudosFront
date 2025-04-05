@@ -1,11 +1,18 @@
 // src/components/Chat.tsx
 import React, { useState, useEffect } from "react";
 import { useWebSocket } from "../../useWebSocket";
+import "./Chat.css";
+
+type ChatMessage = {
+  sender: string;
+  message: string;
+  timestamp?: string;
+};
 
 export default function Chat({ roomId }: { roomId: string }) {
   const { sendMessage, connected, subscribeToChat } = useWebSocket();
   const [message, setMessage] = useState("");
-  const [messages, setMessages] = useState<string[]>([]);
+  const [messages, setMessages] = useState<ChatMessage[]>([]);
 
   useEffect(() => {
     if (!connected) return;
@@ -29,17 +36,20 @@ export default function Chat({ roomId }: { roomId: string }) {
       <div className="chat-box">
         {messages.map((msg, index) => (
           <div key={index} className="chat-message">
-            {msg}
+            <strong>{msg.sender}:</strong> {msg.message}
           </div>
         ))}
       </div>
-      <input
-        type="text"
-        value={message}
-        onChange={(e) => setMessage(e.target.value)}
-        placeholder="Escribe un mensaje..."
-      />
-      <button onClick={sendChatMessage}>Enviar</button>
+
+      <div className="chat-input">
+        <input
+          type="text"
+          value={message}
+          onChange={(e) => setMessage(e.target.value)}
+          placeholder="Escribe un mensaje..."
+        />
+        <button onClick={sendChatMessage}>Enviar</button>
+      </div>
     </div>
   );
 }

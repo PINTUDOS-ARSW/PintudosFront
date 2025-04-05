@@ -119,18 +119,22 @@ function Canvas({ roomId }: { roomId: string }) {
     useEffect(() => {
         const canvas = canvasRef.current;
         if (canvas) {
-            canvas.width = window.innerWidth - 20;
-            canvas.height = window.innerHeight - 20;
+            canvas.width = 600; // Reducido a 600px de ancho
+            canvas.height = 400; // Reducido a 400px de alto
         }
     }, []);
 
     return (
         <canvas
             ref={canvasRef}
+            width={600}
+            height={400}
             style={{
                 border: '1px solid black',
                 backgroundColor: 'white',
-                cursor: 'crosshair'
+                cursor: 'crosshair',
+                width: '600px',
+                height: '400px'
             }}
             onMouseDown={evtIniciaDibujo}
             onMouseMove={evtDibujaCanvas}
