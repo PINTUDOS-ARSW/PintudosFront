@@ -1,58 +1,92 @@
+.canvas{
+  background-color: white; /* Fondo completamente blanco */
+  color: black;
+  width: 10vw;
+  height: 10vh;
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
 
+  display: flex;
+  justify-content: center;
+  align-items: center;
 
-  .canvas{
-    background-color: white; /* Fondo completamente blanco */
-    color: black;
-    width: 10vw;
-    height: 10vh;
-    margin: 0;
-    padding: 0;
-    overflow: hidden;
-  
-    display: flex;
-    justify-content: center;
-    align-items: center;
-  
-    font-size: 2rem;
-    font-family: sans-serif;
-    border: '1px solid black'; /* Añadido para ver el borde del canvas */
-  }
+  font-size: 2rem;
+  font-family: sans-serif;
+  border: '1px solid black'; /* Añadido para ver el borde del canvas */
+}
 
-  .game-background {
-    background-color: #6a0dad;
-  
-    /* Asegura que cubra toda la pantalla */
-    width: 100vw;
-    height: 100vh;
-  
-    display: flex;
-    justify-content: center;
-    align-items: center;
-  }
-  .game-container {
-    display: flex;
-    justify-content: center;
-    gap: 20px;
-    width: 90%;
-    max-width: 1200px;
-  }
-  
-  .canvas {
-    background-color: white;
-    color: black;
-    width: 10vw;
-    height: 10vh;
-    margin: 0;
-    padding: 0;
-    overflow: hidden;
-  
-    display: flex;
-    justify-content: center;
-    align-items: center;
-  
-    font-size: 2rem;
-    font-family: sans-serif;
-    border: 1px solid black; /* Corrigido: sin comillas */
-  }
-  
-  
+.game-background {
+  background-color: #6a0dad;
+
+  /* Asegura que cubra toda la pantalla */
+  width: 100vw;
+  height: 100vh;
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.game-container {
+  display: flex;
+  justify-content: center;
+  gap: 20px;
+  width: 90%;
+  max-width: 1200px;
+}
+
+.canvas {
+  background-color: white;
+  color: black;
+  width: 10vw;
+  height: 10vh;
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  font-size: 2rem;
+  font-family: sans-serif;
+  border: 1px solid black; /* Corrigido: sin comillas */
+}
+
+.palabra {
+  position: absolute;
+  top:-20px;
+  left: 550px;
+  transform: translateX(-50%);
+  z-index: 10; /* para que esté por encima del canvas */
+}
+.floating-button {
+  padding: 12px 20px;
+  font-size: 16px;
+  background-color: #f7a83a;
+  color: #ffffff;
+  border: none;
+  border-radius: 10px;
+  cursor: pointer;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+  z-index: 999;
+  transition: background-color 0.3s;
+}
+
+.floating-button:hover {
+  background-color: #f7a83a;
+}
+
+.timer {
+  position: fixed;
+  top: 40px;
+  left:940px;
+  transform: translateX(-50%);
+  background-color: #222;
+  color: #f7a83a;
+  padding: 8px 16px;
+  font-size: 18px;
+  border-radius: 8px;
+  z-index: 999;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+}
