@@ -22,7 +22,7 @@ const fetchSecretWord = async () => {
   }
 
   try {
-    const response = await axios.get(`http://localhost:8080/game/${roomId}/secret-word`);
+    const response = await axios.get(`http://3.83.55.159:8080/game/${roomId}/secret-word`);
     setSecretWord(response.data);
   } catch (error) {
     console.error("Error al obtener la palabra secreta:", error);

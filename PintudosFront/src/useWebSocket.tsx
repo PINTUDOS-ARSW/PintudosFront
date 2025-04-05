@@ -20,7 +20,7 @@ export const WebSocketProvider: React.FC<{ children: React.ReactNode }> = ({ chi
 
   useEffect(() => {
     const client = new Client({
-      webSocketFactory: () => new SockJS("http://localhost:8080/game"),
+      webSocketFactory: () => new SockJS("http://3.83.55.159:8080/game"),
       reconnectDelay: 5000,
       heartbeatIncoming: 4000,
       heartbeatOutgoing: 4000,
