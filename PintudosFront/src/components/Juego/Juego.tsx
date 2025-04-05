@@ -7,7 +7,7 @@ import Chat from "../Chat/Chat";
 
 export default function Juego() {
   const location = useLocation();
-  const { roomId, player } = location.state || {}; // <- extrae también player
+  const { roomId, player } = location.state || {}; 
 
   useEffect(() => {
     console.log("🟣 Room ID recibido en Juego:", roomId);
@@ -18,7 +18,7 @@ export default function Juego() {
     <div className="game-background">
       <h2 className="player-info">Jugador: {player}</h2>
       <Canvas roomId={roomId} player={player} />
-      <Chat roomId={roomId} username={player} /> {/* <- ✅ corregido aquí */}
+      <Chat roomId={roomId} username={player} /> {}
     </div>
   );
 }

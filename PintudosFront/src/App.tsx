@@ -1,7 +1,7 @@
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
-import Home from './components/Home/Home'; // Ajusta la ruta según la ubicación real del archivo Home
-import Juego from './components/Juego/Juego'; // Ajusta la ruta según la ubicación real del archivo Juego
+import Home from './components/Home/Home'; 
+import Juego from './components/Juego/Juego'; 
 
 function App() {
   return (

@@ -17,7 +17,7 @@ export default function Modal(props: ModalProps) {
   const [show3, setShow3] = useState(false);
   const { joinRoom } = useWebSocket();
 
-  const navigate = useNavigate(); // justo después de las otras constantes
+  const navigate = useNavigate(); 
 
 const handleJoin = () => {
   if (roomId && player) {

@@ -1,16 +1,16 @@
 import React, { useState, useEffect } from 'react';
 import './Modal2.css';
-import { useWebSocket } from './../../useWebSocket'; // Asegúrate de importar correctamente
+import { useWebSocket } from './../../useWebSocket'; 
 
 interface ModalProps {
   show2: boolean;
   setShow2(show: boolean): void;
-  onRoomCreated?: (roomId: string) => void; // Exponer ID al componente padre
+  onRoomCreated?: (roomId: string) => void; 
 }
 
 export default function Modal2(props: ModalProps) {
   const [roomId, setRoomId] = useState('');
-  const { createRoom, connected } = useWebSocket(); // Conexión WebSocket
+  const { createRoom, connected } = useWebSocket(); 
 
   useEffect(() => {
     if (props.show2 && connected && roomId === '') {

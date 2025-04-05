@@ -1,6 +1,6 @@
-// src/components/Chat.tsx
 import React, { useState, useEffect } from "react";
 import { useWebSocket } from "../../useWebSocket";
+import { useNavigate } from "react-router-dom"; // Para redirigir
 import "./Chat.css";
 
 export default function Chat({
@@ -15,28 +15,53 @@ export default function Chat({
   const [messages, setMessages] = useState<
     { sender: string; message: string }[]
   >([]);
+  const [winner, setWinner] = useState<string | null>(null); // Para mostrar el modal
+  const navigate = useNavigate(); // Hook para redirigir
 
   useEffect(() => {
     if (!connected) return;
 
     const subscription = subscribeToChat(roomId, (msg) => {
-      setMessages((prev) => [...prev, msg]);
+      if (msg.message === "REDIRECT_HOME") {
+        navigate("/"); // Redirigir al home
+      } else if (msg.sender === "System" && msg.message.includes("ganó")) {
+        setWinner(msg.message); // Mostrar el modal con el ganador
+      } else {
+        setMessages((prev) => [...prev, msg]);
+      }
     });
 
     return () => {
       subscription?.unsubscribe();
     };
-  }, [connected, roomId, subscribeToChat]);
+  }, [connected, roomId, subscribeToChat, navigate]);
 
   const sendChatMessage = () => {
     if (message.trim() !== "") {
-      sendMessage(roomId, message, "chat", username); // <- AÑADIDO username
+      sendMessage(roomId, message, "chat", username);
       setMessage("");
     }
   };
 
   return (
     <div className="chat-container">
+      {/* Modal para mostrar el ganador */}
+      {winner && (
+        <div className="modal">
+          <div className="modal-content">
+            <p>{winner}</p>
+            <button
+              onClick={() => {
+                setWinner(null); // Cierra el modal
+                navigate("/"); // Redirige al home
+              }}
+            >
+              Cerrar
+            </button>
+          </div>
+        </div>
+      )}
+
       {/* Mensajes */}
       <div className="chat-box">
         {messages.map((msg, index) => (

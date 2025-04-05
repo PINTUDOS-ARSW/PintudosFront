@@ -60,7 +60,7 @@ function Canvas({ roomId }: { roomId: string }) {
         const nuevosPuntos = [...puntos, nuevaPos];
         setPuntos(nuevosPuntos);
 
-        // Dibujo local
+
         ctx.beginPath();
         ctx.strokeStyle = 'black';
         ctx.lineWidth = 3;
@@ -71,7 +71,7 @@ function Canvas({ roomId }: { roomId: string }) {
             ctx.lineTo(nuevaPos.x, nuevaPos.y);
             ctx.stroke();
 
-            // Enviar segmento en tiempo real
+            
             const trace: Trace = {
                 roomId: roomId,
                 points: [

@@ -1,4 +1,3 @@
-// src/useWebSocket.tsx
 import React, { createContext, useContext, useEffect, useRef, useState } from "react";
 import { Client, IMessage } from "@stomp/stompjs";
 import SockJS from "sockjs-client";
@@ -70,7 +69,7 @@ export const WebSocketProvider: React.FC<{ children: React.ReactNode }> = ({ chi
     roomId: string,
     message: string,
     type: "chat" | "trace" = "trace",
-    sender?: string // <-- nuevo parámetro para el nombre del remitente
+    sender?: string 
   ) => {
     const destination =
       type === "chat" ? `/app/chat/${roomId}` : `/app/trace/${roomId}`;
