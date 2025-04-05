@@ -1,7 +1,7 @@
 import React, { useRef, useState, useEffect } from 'react';
 import { useWebSocket } from '../../useWebSocket';
 
-// Definir interfaces
+// Interfaces
 interface Point {
     x: number;
     y: number;
@@ -29,7 +29,7 @@ function Canvas({ roomId }: { roomId: string }) {
 
     useEffect(() => {
         if (!connected) return;
-      
+
         subscribeToTraces(roomId, (trace: Trace) => {
             const canvas = canvasRef.current;
             const ctx = canvas?.getContext("2d");
@@ -60,18 +60,39 @@ function Canvas({ roomId }: { roomId: string }) {
         const nuevosPuntos = [...puntos, nuevaPos];
         setPuntos(nuevosPuntos);
 
+        // Dibujo local
         ctx.beginPath();
         ctx.strokeStyle = 'black';
         ctx.lineWidth = 3;
-        
-        nuevosPuntos.forEach((point: Point, index: number) => {
-            if (index === 0) {
-                ctx.moveTo(point.x, point.y);
-            } else {
-                ctx.lineTo(point.x, point.y);
-            }
-        });
-        ctx.stroke();
+
+        const prev = puntos[puntos.length - 1];
+        if (prev) {
+            ctx.moveTo(prev.x, prev.y);
+            ctx.lineTo(nuevaPos.x, nuevaPos.y);
+            ctx.stroke();
+
+            // Enviar segmento en tiempo real
+            const trace: Trace = {
+                roomId: roomId,
+                points: [
+                    {
+                        type: "Point",
+                        coordinates: [prev.x, prev.y],
+                        longitude: prev.x,
+                        latitude: prev.y
+                    },
+                    {
+                        type: "Point",
+                        coordinates: [nuevaPos.x, nuevaPos.y],
+                        longitude: nuevaPos.x,
+                        latitude: nuevaPos.y
+                    }
+                ],
+                color: 'black',
+                width: 3
+            };
+            sendMessage(roomId, trace);
+        }
     };
 
     const evtIniciaDibujo = (evt: React.MouseEvent<HTMLCanvasElement>) => {
@@ -81,20 +102,6 @@ function Canvas({ roomId }: { roomId: string }) {
     };
 
     const evtTerminaDibujo = () => {
-        if (puntos.length > 0) {
-            const trace: Trace = {
-                roomId: roomId,
-                points: puntos.map(p => ({
-                    type: "Point",
-                    coordinates: [p.x, p.y],
-                    longitude: p.x,
-                    latitude: p.y
-                })),
-                color: 'black',
-                width: 3
-            };
-            sendMessage(roomId, JSON.stringify(trace));
-        }
         setDibujando(false);
         setPuntos([]);
     };
@@ -120,9 +127,9 @@ function Canvas({ roomId }: { roomId: string }) {
     return (
         <canvas
             ref={canvasRef}
-            style={{ 
-                border: '1px solid black', 
-                backgroundColor: 'white', 
+            style={{
+                border: '1px solid black',
+                backgroundColor: 'white',
                 cursor: 'crosshair'
             }}
             onMouseDown={evtIniciaDibujo}

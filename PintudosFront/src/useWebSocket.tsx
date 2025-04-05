@@ -66,17 +66,31 @@ export const WebSocketProvider: React.FC<{ children: React.ReactNode }> = ({ chi
   };
 
 
-  const sendMessage = (roomId: string, message: string, type: "chat" | "trace" = "trace") => {
+  const sendMessage = (
+    roomId: string,
+    payload: any,
+    type: "chat" | "trace" = "trace"
+  ) => {
     const destination = type === "chat" ? `/app/chat/${roomId}` : `/app/trace/${roomId}`;
+    const body = type === "chat" ? JSON.stringify({ message: payload }) : JSON.stringify(payload);
+  
     clientRef.current?.publish({
       destination,
-      body: JSON.stringify({ message }),
+      body,
     });
   };
-
+  
+  const subscribeToPlayerCount = (roomId: string, callback: (count: number) => void) => {
+    clientRef.current?.subscribe(`/topic/room/${roomId}/players`, (msg: IMessage) => {
+      const data = JSON.parse(msg.body);
+      callback(data.players);
+      console.log("🧪 Recibido conteo de jugadores:", data);
+    });
+  };
+  
   const subscribeToChat = (roomId: string, callback: (msg: string) => void) => {
-    clientRef.current?.subscribe(`/topic/${roomId}/chat`, (msg: IMessage) => {
-      callback(msg.body);
+    clientRef.current?.subscribe(`/aws/topic/${roomId}/chat`, (msg: IMessage) => {
+      callback(data.players); // 👈 el atributo correcto del objeto PlayerCount
     });
   };
 
@@ -85,11 +99,11 @@ export const WebSocketProvider: React.FC<{ children: React.ReactNode }> = ({ chi
       const trace = JSON.parse(message.body);
       callback(trace);
     });
-  }; 
+  };
   
 
   return (
-    <WebSocketContext.Provider value={{ createRoom, joinRoom, sendMessage, subscribeToChat, subscribeToTraces, connected }}>
+    <WebSocketContext.Provider value={{ createRoom, joinRoom, sendMessage, subscribeToChat, subscribeToTraces, connected, subscribeToPlayerCount }}>
 
       {children}
     </WebSocketContext.Provider>
