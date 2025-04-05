@@ -43,11 +43,11 @@ export default function Wait(props: ModalProps) {
         <div className="message3">Ya estás dentro</div>
         <div className="message4">Esperando a otros jugadores...</div>
 
-        <div style={{ margin: "10px 0", fontSize: "1.2rem", fontWeight: "bold", color: "#fff" }}>
+        <div style={{ margin: "10px 0", fontSize: "1.2rem", fontWeight: "bold", color: "#000", fontFamily: "'Finger Paint', cursive" }}>
           Código de sala: {props.roomId}
         </div>
 
-        <p style={{ marginTop: "10px", color: "#fff" }}>Jugadores conectados: {jugadores}</p>
+        <p style={{ marginTop: "10px", color: "#000",fontSize: "1.2rem", fontWeight: "bold", fontFamily: "'Finger Paint', cursive" }}>Jugadores conectados: {jugadores}</p>
 
         <div className="pendulum">
           <div className="pendulum_box">
