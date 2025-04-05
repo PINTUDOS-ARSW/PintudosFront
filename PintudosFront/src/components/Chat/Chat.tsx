@@ -2,7 +2,6 @@
 import React, { useState, useEffect } from "react";
 import { useWebSocket } from "../../useWebSocket";
 import "./Chat.css";
-import Ganador from "../Ganar/Ganador";
 
 export default function Chat({
   roomId,
@@ -11,7 +10,6 @@ export default function Chat({
   roomId: string;
   username: string;
 }) {
-  const [show5, setShow5] = React.useState(true);
   const { sendMessage, connected, subscribeToChat } = useWebSocket();
   const [message, setMessage] = useState("");
   const [messages, setMessages] = useState<
