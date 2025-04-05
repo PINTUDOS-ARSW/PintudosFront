@@ -1,24 +1,48 @@
-// src/pages/Juego.tsx
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { useLocation } from "react-router-dom";
+import axios from "axios";
 import "./Juego.css";
 import Canvas from "../Canvas/Canvas";
 import Chat from "../Chat/Chat";
 
 export default function Juego() {
   const location = useLocation();
-  const { roomId, player } = location.state || {}; 
+const { roomId, player } = location.state || {};
+const [secretWord, setSecretWord] = useState<string | null>(null);
 
-  useEffect(() => {
-    console.log("🟣 Room ID recibido en Juego:", roomId);
-    console.log("🟢 Jugador:", player);
-  }, [roomId, player]);
+useEffect(() => {
+  console.log("🟣 Room ID recibido en Juego:", roomId);
+  console.log("🟢 Jugador:", player);
+}, [roomId, player]);
 
-  return (
-    <div className="game-background">
-      <h2 className="player-info">Jugador: {player}</h2>
-      <Canvas roomId={roomId} player={player} />
-      <Chat roomId={roomId} username={player} /> {}
-    </div>
-  );
+const fetchSecretWord = async () => {
+  if (!roomId) {
+    alert("Room ID no disponible");
+    return;
+  }
+
+  try {
+    const response = await axios.get(`http://localhost:8080/game/${roomId}/secret-word`);
+    setSecretWord(response.data);
+  } catch (error) {
+    console.error("Error al obtener la palabra secreta:", error);
+    setSecretWord("Error al obtener la palabra secreta");
+  }
+};
+
+return (
+  <div className="game-background">
+    <h2 className="player-info">Jugador: {player}</h2>
+    <Canvas roomId={roomId} player={player} />
+    <Chat roomId={roomId} username={player} />
+    <button
+      onClick={fetchSecretWord}
+      className="fetch-secret-word-button"
+      disabled={player !== "indefinido" && player !== undefined}
+    >
+      Obtener Palabra Secreta
+    </button>
+    {secretWord && <p className="secret-word">Palabra Secreta: {secretWord}</p>}
+  </div>
+);
 }

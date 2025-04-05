@@ -21,7 +21,7 @@ interface Trace {
     width: number;
 }
 
-function Canvas({ roomId }: { roomId: string }) {
+function Canvas({ roomId, player }: { roomId: string; player: string | undefined }) {
     const canvasRef = useRef<HTMLCanvasElement>(null);
     const [dibujando, setDibujando] = useState(false);
     const [puntos, setPuntos] = useState<Point[]>([]);
@@ -51,7 +51,7 @@ function Canvas({ roomId }: { roomId: string }) {
     }, [connected, roomId]);
 
     const evtDibujaCanvas = (evt: React.MouseEvent<HTMLCanvasElement>) => {
-        if (!dibujando) return;
+        if (!dibujando || (player !== "indefinido" && player !== undefined)) return; // Solo permite dibujar si el jugador es "indefinido" o undefined
         const canvas = canvasRef.current;
         const ctx = canvas?.getContext('2d');
         if (!ctx) return;
@@ -59,7 +59,6 @@ function Canvas({ roomId }: { roomId: string }) {
         const nuevaPos = obtenerCoordenadas(evt);
         const nuevosPuntos = [...puntos, nuevaPos];
         setPuntos(nuevosPuntos);
-
 
         ctx.beginPath();
         ctx.strokeStyle = 'black';
@@ -71,7 +70,6 @@ function Canvas({ roomId }: { roomId: string }) {
             ctx.lineTo(nuevaPos.x, nuevaPos.y);
             ctx.stroke();
 
-            
             const trace: Trace = {
                 roomId: roomId,
                 points: [
@@ -96,12 +94,14 @@ function Canvas({ roomId }: { roomId: string }) {
     };
 
     const evtIniciaDibujo = (evt: React.MouseEvent<HTMLCanvasElement>) => {
+        if (player !== "indefinido" && player !== undefined) return; // Solo permite iniciar el dibujo si el jugador es "indefinido" o undefined
         setDibujando(true);
         const pos = obtenerCoordenadas(evt);
         setPuntos([pos]);
     };
 
     const evtTerminaDibujo = () => {
+        if (player !== "indefinido" && player !== undefined) return; // Solo permite terminar el dibujo si el jugador es "indefinido" o undefined
         setDibujando(false);
         setPuntos([]);
     };
@@ -132,7 +132,7 @@ function Canvas({ roomId }: { roomId: string }) {
             style={{
                 border: '1px solid black',
                 backgroundColor: 'white',
-                cursor: 'crosshair',
+                cursor: player === "indefinido" || player === undefined ? 'crosshair' : 'not-allowed', // Cambia el cursor si no puede dibujar
                 width: '600px',
                 height: '400px'
             }}
