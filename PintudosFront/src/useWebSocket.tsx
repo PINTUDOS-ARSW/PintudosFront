@@ -1,6 +1,8 @@
 import React, { createContext, useContext, useEffect, useRef, useState } from "react";
 import { Client, IMessage } from "@stomp/stompjs";
 import SockJS from "sockjs-client";
+import { encrypt, decrypt } from "./aesCipher";
+
 
 type WebSocketContextType = {
   createRoom: (roomId: string, player: string) => void;
@@ -65,31 +67,38 @@ export const WebSocketProvider: React.FC<{ children: React.ReactNode }> = ({ chi
   };
 
 
-  const sendMessage = (
-    roomId: string,
-    message: string,
-    type: "chat" | "trace" = "trace",
-    sender?: string 
-  ) => {
-    const destination =
-      type === "chat" ? `/app/chat/${roomId}` : `/app/trace/${roomId}`;
-  
-    let body;
-  
-    if (type === "chat") {
-      body = JSON.stringify({
-        sender: sender ?? "Anónimo",
-        message: message,
-      });
-    } else {
-      body = JSON.stringify(message);
-    }
-  
-    clientRef.current?.publish({
-      destination,
-      body,
+ const sendMessage = (
+  roomId: string,
+  message: string, // aquí 'message' será el JSON stringify de trace antes de cifrar
+  type: "chat" | "trace" = "trace",
+  sender?: string 
+) => {
+  const destination =
+    type === "chat" ? `/app/chat/${roomId}` : `/app/trace/${roomId}`;
+
+  let body;
+
+  if (type === "chat") {
+    body = JSON.stringify({
+      sender: sender ?? "Anónimo",
+      message: message,
     });
-  };
+  } else {
+    // Aquí ciframos el mensaje JSON (que es string) antes de enviarlo
+    body = encrypt(message);
+  }
+  
+  if (type === "trace") {
+  const encrypted = encrypt(message);
+  console.log("📤 Enviando trace cifrado:", encrypted);
+  body = encrypted;
+}
+
+  clientRef.current?.publish({
+    destination,
+    body,
+  });
+};
   
   const subscribeToPlayerCount = (roomId: string, callback: (count: number) => void) => {
     clientRef.current?.subscribe(`/topic/room/${roomId}/players`, (msg: IMessage) => {
@@ -107,11 +116,17 @@ export const WebSocketProvider: React.FC<{ children: React.ReactNode }> = ({ chi
   };
 
   const subscribeToTraces = (roomId: string, callback: (trace: any) => void) => {
-    clientRef.current?.subscribe(`/topic/${roomId}/traces`, (message: IMessage) => {
-      const trace = JSON.parse(message.body);
+  return clientRef.current?.subscribe(`/topic/${roomId}/traces`, (message: IMessage) => {
+    const encryptedTrace = message.body;
+    try {
+      const decryptedTraceJson = decrypt(encryptedTrace);
+      const trace = JSON.parse(decryptedTraceJson);
       callback(trace);
-    });
-  };
+    } catch (error) {
+      console.error("Error al descifrar o parsear el mensaje trace:", error);
+    }
+  });
+};
   
 
   return (
