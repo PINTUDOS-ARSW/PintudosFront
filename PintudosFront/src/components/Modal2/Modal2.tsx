@@ -14,14 +14,16 @@ export default function Modal2(props: ModalProps) {
 
   useEffect(() => {
     if (props.show2 && connected && roomId === '') {
-      const newRoomId = Math.floor(100000 + Math.random() * 900000).toString();
+      // Generar un número aleatorio de 6 dígitos usando CSPRNG
+      const array = new Uint32Array(1);
+      window.crypto.getRandomValues(array);
+      const newRoomId = (100000 + (array[0] % 900000)).toString().padStart(6, '0');
       setRoomId(newRoomId);
       createRoom(newRoomId);
       console.log("✅ Nueva sala creada con ID:", newRoomId);
       props.onRoomCreated?.(newRoomId);
     }
   }, [props.show2, connected]);
-
   if (!props.show2) {
     return null;
   }

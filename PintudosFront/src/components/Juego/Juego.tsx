@@ -49,10 +49,12 @@ export default function Juego() {
     }
   };
   
-    // Función para obtener posiciones aleatorias
+  // Función para obtener posiciones aleatorias usando CSPRNG
   const getRandomPosition = () => {
-    const top = Math.floor(Math.random() * (window.innerHeight - 100));
-    const left = Math.floor(Math.random() * (window.innerWidth - 100));
+    const array = new Uint32Array(2);
+    window.crypto.getRandomValues(array);
+    const top = Math.floor((array[0] / (0xFFFFFFFF + 1)) * (window.innerHeight - 100));
+    const left = Math.floor((array[1] / (0xFFFFFFFF + 1)) * (window.innerWidth - 100));
     return { top, left };
   };
 
