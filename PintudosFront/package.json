@@ -24,7 +24,7 @@
   "devDependencies": {
     "@eslint/js": "^9.21.0",
     "@types/crypto-js": "^4.2.2",
-    "@types/react": "^19.1.0",
+    "@types/react": "^19.1.4",
     "@types/react-dom": "^19.0.4",
     "@types/sockjs-client": "^1.5.4",
     "@types/styled-components": "^5.1.34",

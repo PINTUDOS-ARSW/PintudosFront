@@ -48,31 +48,48 @@ export default function Juego() {
       setClue("Error al obtener la pista");
     }
   };
+  
+    // Función para obtener posiciones aleatorias
+  const getRandomPosition = () => {
+    const top = Math.floor(Math.random() * (window.innerHeight - 100));
+    const left = Math.floor(Math.random() * (window.innerWidth - 100));
+    return { top, left };
+  };
 
-  return (
+  const randomPosition = getRandomPosition();
+
+
+    return (
     <div className="game-background">
-      <h2 className="player-info">Jugador: {player}</h2>
-      <Canvas roomId={roomId} player={player} />
-      <Chat roomId={roomId} username={player} />
-
-      {/* Obtener palabra secreta */}
-      <button
-        onClick={fetchSecretWord}
-        className="fetch-secret-word-button"
-        disabled={player !== "indefinido" && player !== undefined}
-      >
-        Obtener Palabra Secreta
-      </button>
-      {secretWord && <p className="secret-word">Palabra Secreta: {secretWord}</p>}
-
-      {/* Obtener pista */}
-      <button
+      {/* Sección superior con el nombre del jugador y el botón de obtener palabra secreta */}
+      <div className="top-section">
+        <h2 className="player-info">Jugador: {player}</h2>
+        <button
+          onClick={fetchSecretWord}
+          className="fetch-secret-word-button"
+          disabled={player !== "indefinido" && player !== undefined}
+        >
+          Obtener Palabra Secreta
+        </button>
+      </div>
+     {/* Canvas y Chat en el centro */}
+      <div className="middle-section">
+        <Canvas roomId={roomId} player={player} />
+        <Chat roomId={roomId} username={player} />
+      </div>
+    {/* Botón para obtener pista con posición aleatoria */}
+     <button
         onClick={fetchClue}
         className="fetch-clue-button"
         disabled={hasClue}
-      >
+        style={{ position: 'absolute', top: randomPosition.top, left: randomPosition.left }}
+        >
         Obtener Pista
       </button>
+      {secretWord && (
+        <p className="secret-word">Palabra Secreta: {secretWord}</p>
+      )}
+
       {clue && <p className="clue">Pista: {clue}</p>}
     </div>
   );

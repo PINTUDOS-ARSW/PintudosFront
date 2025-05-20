@@ -89,7 +89,7 @@ function Canvas({ roomId, player }: { roomId: string; player: string | undefined
                 color: 'black',
                 width: 3
             };
-            sendMessage(roomId, JSON.stringify(trace));
+            sendMessage(roomId, trace);
         }
     };
 
