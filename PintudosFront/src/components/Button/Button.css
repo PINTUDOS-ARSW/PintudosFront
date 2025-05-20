@@ -1,0 +1,12 @@
+.custom-button {
+    background-color: black;
+    color: white;
+    padding: 0.5rem 1rem; /* equivalente a px-4 py-2 */
+    border-radius: 0.375rem; /* equivalente a rounded */
+    border: none;
+    cursor: pointer;
+  }
+  
+  .custom-button:hover {
+    opacity: 0.9;
+  }
