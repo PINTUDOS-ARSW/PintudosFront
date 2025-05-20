@@ -12,8 +12,21 @@ jobs:
     steps:
       - uses: actions/checkout@v4
         with:
-          fetch-depth: 0  # Shallow clones should be disabled for a better relevancy of analysis
+          fetch-depth: 0
+
+      - name: Run tests with coverage
+        working-directory: PintudosFront
+        run: npm run test -- --coverage
+
       - name: SonarQube Scan
         uses: SonarSource/sonarqube-scan-action@v5
+        working-directory: PintudosFront
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+        with:
+          projectKey: PINTUDOS-ARSW_PintudosFront
+          organization: pintando
+          extraProperties: |
+            sonar.sources=src
+            sonar.sourceEncoding=UTF-8
+            sonar.javascript.lcov.reportPaths=coverage/lcov.info
