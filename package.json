@@ -5,6 +5,11 @@
     "sockjs-client": "^1.6.1"
   },
   "devDependencies": {
+    "@testing-library/jest-dom": "^6.6.3",
+    "@testing-library/react": "^16.3.0",
+    "@testing-library/user-event": "^14.6.1",
+    "@types/jest": "^29.5.14",
+    "jest": "^29.7.0",
     "rollup-plugin-node-polyfills": "^0.2.1"
   }
 }
