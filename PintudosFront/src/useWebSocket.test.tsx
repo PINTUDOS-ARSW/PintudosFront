@@ -1,7 +1,7 @@
 // src/__tests__/useWebSocket.test.tsx
 import React from "react";
 import { renderHook, act } from "@testing-library/react";
-import { WebSocketProvider, useWebSocket } from "../useWebSocket"; // Ajusta ruta si es necesario
+import { WebSocketProvider, useWebSocket } from "./useWebSocket"; // Ajusta ruta si es necesario
 import { Client } from "@stomp/stompjs";
 
 jest.mock("@stomp/stompjs", () => {
