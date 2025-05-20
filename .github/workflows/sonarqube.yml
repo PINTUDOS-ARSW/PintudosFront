@@ -1,26 +1,19 @@
-name: Build
-on:
-  push:
-    branches:
-      - main
-  pull_request:
-    types: [opened, synchronize, reopened]
 jobs:
   sonarqube:
-    name: SonarQube
     runs-on: windows-latest
+    defaults:
+      run:
+        working-directory: PintudosFront
     steps:
       - uses: actions/checkout@v4
         with:
           fetch-depth: 0
 
       - name: Run tests with coverage
-        working-directory: PintudosFront
         run: npm run test -- --coverage
 
       - name: SonarQube Scan
         uses: SonarSource/sonarqube-scan-action@v5
-        working-directory: PintudosFront
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
         with:
