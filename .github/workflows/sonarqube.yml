@@ -12,7 +12,7 @@ jobs:
     runs-on: windows-latest
     defaults:
       run:
-        working-directory: PintudosFront  # Aquí cambias el directorio base para todos los pasos
+        working-directory: PintudosFront
 
     steps:
       - name: Checkout code
@@ -28,5 +28,7 @@ jobs:
 
       - name: SonarQube Scan
         uses: SonarSource/sonarqube-scan-action@v5
+        with:
+          projectBaseDir: PintudosFront
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
