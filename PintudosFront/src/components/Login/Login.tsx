@@ -2,9 +2,9 @@ import React from 'react';
 import { GoogleLogin, CredentialResponse } from '@react-oauth/google';
 import { jwtDecode } from 'jwt-decode';
 import { useNavigate } from 'react-router-dom';
-import { useAuth } from '../AuthContext/AuthContext'; // Asegúrate de que la ruta sea correcta
+import { useAuth } from '../AuthContext/AuthContext';
+import './Login.css'; // Asegúrate de importar el CSS
 
-// Define el tipo del token decodificado (puedes ampliarlo según lo que necesites)
 interface DecodedToken {
   name: string;
   email: string;
@@ -13,7 +13,7 @@ interface DecodedToken {
   [key: string]: unknown;
 }
 
-const Home: React.FC = () => {
+const Login: React.FC = () => {
   const navigate = useNavigate();
   const { login } = useAuth();
 
@@ -22,7 +22,6 @@ const Home: React.FC = () => {
     if (token) {
       const user = jwtDecode<DecodedToken>(token);
       console.log("Usuario:", user);
-
       login(token);
       navigate("/home");
     } else {
@@ -31,14 +30,19 @@ const Home: React.FC = () => {
   };
 
   return (
-    <div>
-      <h1>Pintu2</h1>
-      <GoogleLogin
-        onSuccess={onSuccess}
-        onError={() => console.log('Falló el login')}
-      />
+    <div className="login-container">
+      <div className="login-card">
+        <h1 className="login-title">Bienvenido a <span>Pintu2</span></h1>
+        <p className="login-subtitle">Inicia sesión para comenzar a jugar</p>
+        <div className="login-button">
+          <GoogleLogin
+            onSuccess={onSuccess}
+            onError={() => console.log('Falló el login')}
+          />
+        </div>
+      </div>
     </div>
   );
 };
 
-export default Home;
+export default Login;
