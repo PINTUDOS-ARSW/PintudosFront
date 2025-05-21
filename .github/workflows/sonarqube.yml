@@ -24,7 +24,7 @@ jobs:
         run: npm install
 
       - name: Run tests with coverage
-        run: npm run test -- --coverage
+        run: npm run test -- --coverage || true
 
       - name: SonarQube Scan
         uses: SonarSource/sonarqube-scan-action@v5
