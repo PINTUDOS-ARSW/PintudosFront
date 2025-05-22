@@ -18,4 +18,13 @@ export default defineConfig({
       plugins: [nodePolyfills()],
     },
   },
+  server: {
+    proxy: {
+      '/game': {
+        target: 'https://api.arswpintudos.com',
+        changeOrigin: true,
+        ws: true
+      }
+    }
+  }
 });
