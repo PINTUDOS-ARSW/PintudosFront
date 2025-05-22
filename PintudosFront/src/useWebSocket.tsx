@@ -117,35 +117,38 @@ export const WebSocketProvider: React.FC<{ children: React.ReactNode }> = ({
   };
 
   const sendMessage = (
-    roomId: string,
-    message: string,
-    type: "chat" | "trace" = "trace",
-    sender?: string
-  ) => {
-    if (!connected) {
-      waitForConnection(() => sendMessage(roomId, message, type, sender));
-      return;
-    }
-    
-    const destination =
-      type === "chat" ? `/app/chat/${roomId}` : `/app/trace/${roomId}`;
+  roomId: string,
+  message: string,
+  type: "chat" | "trace" = "trace",
+  sender?: string
+) => {
+  if (!connected) {
+    waitForConnection(() => sendMessage(roomId, message, type, sender));
+    return;
+  }
+  
+  const destination =
+    type === "chat" ? `/app/chat/${roomId}` : `/app/trace/${roomId}`;
 
-    let body;
+  let body;
 
-    if (type === "chat") {
-      body = JSON.stringify({
-        sender: sender ?? "Anónimo",
-        message: message,
-      });
-    } else {
-      body = JSON.stringify(message);
-    }
-
-    clientRef.current?.publish({
-      destination,
-      body,
+  if (type === "chat") {
+    // Estructura exacta que espera tu ChatController en el backend
+    body = JSON.stringify({
+      sender: sender ?? "Anónimo",
+      message: message
     });
-  };
+  } else {
+    body = JSON.stringify(message);
+  }
+
+  console.log(`📤 Enviando mensaje a ${destination}:`, body);
+  
+  clientRef.current?.publish({
+    destination,
+    body,
+  });
+};
 
   const subscribeToPlayerCount = (
     roomId: string,
@@ -167,26 +170,33 @@ export const WebSocketProvider: React.FC<{ children: React.ReactNode }> = ({
   };
 
   const subscribeToChat = (
-    roomId: string,
-    callback: (msg: any) => void
-  ) => {
-    if (!connected) {
-      waitForConnection(() => subscribeToChat(roomId, callback));
-      return null;
-    }
-    
-    return clientRef.current?.subscribe(
-      `/topic/chat/${roomId}`,
-      (msg: IMessage) => {
-        try {
-          const data = JSON.parse(msg.body);
-          callback(data);
-        } catch (error) {
-          console.error("Error parsing chat message:", error);
-        }
+  roomId: string,
+  callback: (msg: any) => void
+) => {
+  if (!connected) {
+    console.log("⏳ Esperando conexión para suscribirse al chat");
+    waitForConnection(() => subscribeToChat(roomId, callback));
+    return { unsubscribe: () => {} }; // Devolver un objeto con método unsubscribe vacío
+  }
+  
+  console.log(`🔄 Suscribiéndose al tópico: /topic/chat/${roomId}`);
+  
+  const subscription = clientRef.current?.subscribe(
+    `/topic/chat/${roomId}`,
+    (msg: IMessage) => {
+      try {
+        console.log(`📩 Mensaje recibido en tópico /topic/chat/${roomId}:`, msg.body);
+        const data = JSON.parse(msg.body);
+        callback(data);
+      } catch (error) {
+        console.error("Error parsing chat message:", error);
       }
-    );
-  };
+    }
+  );
+  
+  // Devolver el objeto de suscripción para permitir cancelarla después
+  return subscription;
+};
 
   const subscribeToTraces = (
     roomId: string,

@@ -1,7 +1,6 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { useWebSocket } from "../../useWebSocket";
 import { useNavigate } from "react-router-dom";
-import "./Chat.css";
 
 export default function Chat({
   roomId,
@@ -13,21 +12,37 @@ export default function Chat({
   const { sendMessage, connected, subscribeToChat, waitForConnection } = useWebSocket();
   const [message, setMessage] = useState("");
   const [messages, setMessages] = useState<
-    { sender: string; message: string }[]
+    { sender: string; message: string; timestamp?: string }[]
   >([]);
   const [winner, setWinner] = useState<string | null>(null);
   const navigate = useNavigate();
-  const [isSubscribed, setIsSubscribed] = useState(false);
+  const subscriptionRef = useRef<any>(null);
+  const messagesContainerRef = useRef<HTMLDivElement>(null);
 
+  // Auto-scroll cuando se reciben nuevos mensajes
   useEffect(() => {
-    if (!roomId || isSubscribed) return;
+    if (messagesContainerRef.current) {
+      messagesContainerRef.current.scrollTop = messagesContainerRef.current.scrollHeight;
+    }
+  }, [messages]);
+
+  // Efecto para suscribirse al chat - CORREGIDO
+  useEffect(() => {
+    if (!roomId) return;
     
-    // Usar waitForConnection para asegurar que la conexión está lista
+    // Limpiar suscripción anterior si existe
+    if (subscriptionRef.current) {
+      subscriptionRef.current.unsubscribe();
+      subscriptionRef.current = null;
+    }
+    
+    // Suscribirse solo cuando la conexión esté lista
     waitForConnection(() => {
       try {
         console.log("💬 Suscribiéndose al chat para la sala:", roomId);
         
-        const subscription = subscribeToChat(roomId, (msg) => {
+        // Guardar la referencia de la suscripción
+        subscriptionRef.current = subscribeToChat(roomId, (msg) => {
           console.log("📨 Mensaje recibido:", msg);
           
           if (msg.message === "REDIRECT_HOME") {
@@ -35,32 +50,56 @@ export default function Chat({
           } else if (msg.sender === "System" && msg.message.includes("ganó")) {
             setWinner(msg.message);
           } else {
-            setMessages((prev) => [...prev, msg]);
+            // Usar una función para actualizar el estado que compara con los mensajes existentes
+            setMessages(prevMessages => {
+              // Si el mensaje ya existe (verificando por contenido y timestamp), no lo añadas
+              const messageExists = prevMessages.some(existingMsg => 
+                existingMsg.sender === msg.sender && 
+                existingMsg.message === msg.message && 
+                existingMsg.timestamp === msg.timestamp
+              );
+              
+              if (messageExists) {
+                return prevMessages;
+              } else {
+                return [...prevMessages, msg];
+              }
+            });
           }
         });
         
-        setIsSubscribed(true);
         console.log("✅ Suscripción al chat completada");
-        
-        // Importante: retornar una función de limpieza para el efecto
-        return () => {
-          if (subscription && typeof subscription.unsubscribe === 'function') {
-            subscription.unsubscribe();
-          }
-        };
       } catch (error) {
         console.error("❌ Error al suscribirse al chat:", error);
       }
     });
-  }, [roomId, waitForConnection, subscribeToChat, navigate, isSubscribed]);
+    
+    // Limpiar suscripción al desmontar
+    return () => {
+      if (subscriptionRef.current) {
+        console.log("🔄 Limpiando suscripción al chat");
+        subscriptionRef.current.unsubscribe();
+        subscriptionRef.current = null;
+      }
+    };
+  }, [roomId, waitForConnection, subscribeToChat, navigate]);
 
   const sendChatMessage = () => {
     if (message.trim() !== "") {
-      // Usar waitForConnection para enviar el mensaje
+      // Usar waitForConnection para asegurar que el mensaje se envía cuando la conexión está lista
       waitForConnection(() => {
+        console.log(`🚀 Enviando mensaje al tópico /app/chat/${roomId}:`, message);
+        
+        // El objeto que enviamos debe coincidir con la clase ChatMessage en el backend
+        const chatMessage = {
+          sender: username,
+          message: message
+        };
+        
+        // El tercer parámetro debe ser "chat" para que se enrute correctamente
         sendMessage(roomId, message, "chat", username);
+        setMessage("");
       });
-      setMessage("");
     }
   };
 
@@ -91,14 +130,17 @@ export default function Chat({
       )}
 
       {/* Mensajes */}
-      <div className="chat-box">
+      <div 
+        className="chat-box" 
+        ref={messagesContainerRef}
+      >
         {messages.length === 0 ? (
           <div className="empty-chat">No hay mensajes aún. ¡Sé el primero en escribir!</div>
         ) : (
           messages.map((msg, index) => (
             <div 
               key={index} 
-              className={`chat-message ${msg.sender === username ? 'own-message' : ''}`}
+              className={`chat-message ${msg.sender === username ? 'own-message' : ''} ${msg.sender === 'System' ? 'system-message' : ''}`}
             >
               <strong>{msg.sender}:</strong> {msg.message}
             </div>
@@ -114,8 +156,14 @@ export default function Chat({
           onChange={(e) => setMessage(e.target.value)}
           onKeyPress={handleKeyPress}
           placeholder="Escribe un mensaje..."
+          disabled={!connected}
         />
-        <button onClick={sendChatMessage}>Enviar</button>
+        <button 
+          onClick={sendChatMessage}
+          disabled={!connected || message.trim() === ""}
+        >
+          Enviar
+        </button>
       </div>
 
       {!connected && (
