@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useWebSocket } from "../../useWebSocket";
-import { useNavigate } from "react-router-dom"; // Para redirigir
+import { useNavigate } from "react-router-dom";
 import "./Chat.css";
 
 export default function Chat({
@@ -10,36 +10,64 @@ export default function Chat({
   roomId: string;
   username: string;
 }) {
-  const { sendMessage, connected, subscribeToChat } = useWebSocket();
+  const { sendMessage, connected, subscribeToChat, waitForConnection } = useWebSocket();
   const [message, setMessage] = useState("");
   const [messages, setMessages] = useState<
     { sender: string; message: string }[]
   >([]);
-  const [winner, setWinner] = useState<string | null>(null); // Para mostrar el modal
-  const navigate = useNavigate(); // Hook para redirigir
+  const [winner, setWinner] = useState<string | null>(null);
+  const navigate = useNavigate();
+  const [isSubscribed, setIsSubscribed] = useState(false);
 
   useEffect(() => {
-    if (!connected) return;
-
-    const subscription = subscribeToChat(roomId, (msg) => {
-      if (msg.message === "REDIRECT_HOME") {
-        navigate("/"); // Redirigir al home
-      } else if (msg.sender === "System" && msg.message.includes("ganó")) {
-        setWinner(msg.message); // Mostrar el modal con el ganador
-      } else {
-        setMessages((prev) => [...prev, msg]);
+    if (!roomId || isSubscribed) return;
+    
+    // Usar waitForConnection para asegurar que la conexión está lista
+    waitForConnection(() => {
+      try {
+        console.log("💬 Suscribiéndose al chat para la sala:", roomId);
+        
+        const subscription = subscribeToChat(roomId, (msg) => {
+          console.log("📨 Mensaje recibido:", msg);
+          
+          if (msg.message === "REDIRECT_HOME") {
+            navigate("/");
+          } else if (msg.sender === "System" && msg.message.includes("ganó")) {
+            setWinner(msg.message);
+          } else {
+            setMessages((prev) => [...prev, msg]);
+          }
+        });
+        
+        setIsSubscribed(true);
+        console.log("✅ Suscripción al chat completada");
+        
+        // Importante: retornar una función de limpieza para el efecto
+        return () => {
+          if (subscription && typeof subscription.unsubscribe === 'function') {
+            subscription.unsubscribe();
+          }
+        };
+      } catch (error) {
+        console.error("❌ Error al suscribirse al chat:", error);
       }
     });
-
-    return () => {
-      subscription?.unsubscribe();
-    };
-  }, [connected, roomId, subscribeToChat, navigate]);
+  }, [roomId, waitForConnection, subscribeToChat, navigate, isSubscribed]);
 
   const sendChatMessage = () => {
     if (message.trim() !== "") {
-      sendMessage(roomId, message, "chat", username);
+      // Usar waitForConnection para enviar el mensaje
+      waitForConnection(() => {
+        sendMessage(roomId, message, "chat", username);
+      });
       setMessage("");
+    }
+  };
+
+  // Manejar la tecla Enter para enviar mensajes
+  const handleKeyPress = (e: React.KeyboardEvent) => {
+    if (e.key === 'Enter') {
+      sendChatMessage();
     }
   };
 
@@ -52,8 +80,8 @@ export default function Chat({
             <p>{winner}</p>
             <button
               onClick={() => {
-                setWinner(null); // Cierra el modal
-                navigate("/"); // Redirige al home
+                setWinner(null);
+                navigate("/");
               }}
             >
               Cerrar
@@ -64,11 +92,18 @@ export default function Chat({
 
       {/* Mensajes */}
       <div className="chat-box">
-        {messages.map((msg, index) => (
-          <div key={index} className="chat-message">
-            <strong>{msg.sender}:</strong> {msg.message}
-          </div>
-        ))}
+        {messages.length === 0 ? (
+          <div className="empty-chat">No hay mensajes aún. ¡Sé el primero en escribir!</div>
+        ) : (
+          messages.map((msg, index) => (
+            <div 
+              key={index} 
+              className={`chat-message ${msg.sender === username ? 'own-message' : ''}`}
+            >
+              <strong>{msg.sender}:</strong> {msg.message}
+            </div>
+          ))
+        )}
       </div>
 
       {/* Input y botón */}
@@ -77,10 +112,17 @@ export default function Chat({
           type="text"
           value={message}
           onChange={(e) => setMessage(e.target.value)}
+          onKeyPress={handleKeyPress}
           placeholder="Escribe un mensaje..."
         />
         <button onClick={sendChatMessage}>Enviar</button>
       </div>
+
+      {!connected && (
+        <div className="connection-status">
+          Conectando al servidor...
+        </div>
+      )}
     </div>
   );
 }

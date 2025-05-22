@@ -25,33 +25,47 @@ function Canvas({ roomId, player }: { roomId: string; player: string | undefined
     const canvasRef = useRef<HTMLCanvasElement>(null);
     const [dibujando, setDibujando] = useState(false);
     const [puntos, setPuntos] = useState<Point[]>([]);
-    const { sendMessage, connected, subscribeToTraces } = useWebSocket();
+    const { sendMessage, connected, subscribeToTraces, waitForConnection } = useWebSocket();
+    const [isSubscribed, setIsSubscribed] = useState(false);
 
+    // Suscribirse a los trazos solo cuando la conexión está lista
     useEffect(() => {
-        if (!connected) return;
+        if (!roomId || isSubscribed) return;
+        
+        // Usar waitForConnection para asegurar que la conexión esté lista
+        waitForConnection(() => {
+            try {
+                console.log("🎨 Suscribiéndose a trazos para la sala:", roomId);
+                
+                subscribeToTraces(roomId, (trace: Trace) => {
+                    const canvas = canvasRef.current;
+                    const ctx = canvas?.getContext("2d");
+                    if (!ctx) return;
 
-        subscribeToTraces(roomId, (trace: Trace) => {
-            const canvas = canvasRef.current;
-            const ctx = canvas?.getContext("2d");
-            if (!ctx) return;
+                    ctx.beginPath();
+                    ctx.strokeStyle = trace.color || 'black';
+                    ctx.lineWidth = trace.width || 3;
 
-            ctx.beginPath();
-            ctx.strokeStyle = trace.color || 'black';
-            ctx.lineWidth = trace.width || 3;
-
-            trace.points.forEach((point: CustomPoint, index: number) => {
-                if (index === 0) {
-                    ctx.moveTo(point.longitude, point.latitude);
-                } else {
-                    ctx.lineTo(point.longitude, point.latitude);
-                }
-            });
-            ctx.stroke();
+                    trace.points.forEach((point: CustomPoint, index: number) => {
+                        if (index === 0) {
+                            ctx.moveTo(point.longitude, point.latitude);
+                        } else {
+                            ctx.lineTo(point.longitude, point.latitude);
+                        }
+                    });
+                    ctx.stroke();
+                });
+                
+                setIsSubscribed(true);
+                console.log("✅ Suscripción a trazos completada");
+            } catch (error) {
+                console.error("❌ Error al suscribirse a los trazos:", error);
+            }
         });
-    }, [connected, roomId]);
+    }, [roomId, waitForConnection, subscribeToTraces, isSubscribed]);
 
     const evtDibujaCanvas = (evt: React.MouseEvent<HTMLCanvasElement>) => {
-        if (!dibujando || (player !== "indefinido" && player !== undefined)) return; // Solo permite dibujar si el jugador es "indefinido" o undefined
+        if (!dibujando || (player !== "indefinido" && player !== undefined)) return;
         const canvas = canvasRef.current;
         const ctx = canvas?.getContext('2d');
         if (!ctx) return;
@@ -89,19 +103,23 @@ function Canvas({ roomId, player }: { roomId: string; player: string | undefined
                 color: 'black',
                 width: 3
             };
-            sendMessage(roomId, trace);
+            
+            // Usar waitForConnection para enviar el mensaje
+            waitForConnection(() => {
+                sendMessage(roomId, JSON.stringify(trace), "trace");
+            });
         }
     };
 
     const evtIniciaDibujo = (evt: React.MouseEvent<HTMLCanvasElement>) => {
-        if (player !== "indefinido" && player !== undefined) return; // Solo permite iniciar el dibujo si el jugador es "indefinido" o undefined
+        if (player !== "indefinido" && player !== undefined) return; 
         setDibujando(true);
         const pos = obtenerCoordenadas(evt);
         setPuntos([pos]);
     };
 
     const evtTerminaDibujo = () => {
-        if (player !== "indefinido" && player !== undefined) return; // Solo permite terminar el dibujo si el jugador es "indefinido" o undefined
+        if (player !== "indefinido" && player !== undefined) return;
         setDibujando(false);
         setPuntos([]);
     };
@@ -119,8 +137,8 @@ function Canvas({ roomId, player }: { roomId: string; player: string | undefined
     useEffect(() => {
         const canvas = canvasRef.current;
         if (canvas) {
-            canvas.width = 600; // Reducido a 600px de ancho
-            canvas.height = 400; // Reducido a 400px de alto
+            canvas.width = 600;
+            canvas.height = 400;
         }
     }, []);
 
@@ -132,7 +150,7 @@ function Canvas({ roomId, player }: { roomId: string; player: string | undefined
             style={{
                 border: '1px solid black',
                 backgroundColor: 'white',
-                cursor: player === "indefinido" || player === undefined ? 'crosshair' : 'not-allowed', // Cambia el cursor si no puede dibujar
+                cursor: player === "indefinido" || player === undefined ? 'crosshair' : 'not-allowed',
                 width: '600px',
                 height: '400px'
             }}
