@@ -25,7 +25,7 @@ export default function Juego() {
     }
 
     try {
-      const response = await axios.get(`http://localhost:8080/game/${roomId}/secret-word`);
+      const response = await axios.get(`https://api.arswpintudos.com//game/${roomId}/secret-word`);
       setSecretWord(response.data);
     } catch (error) {
       console.error("Error al obtener la palabra secreta:", error);
@@ -40,7 +40,7 @@ export default function Juego() {
     }
 
     try {
-      const response = await axios.get(`http://localhost:8080/game/${roomId}/clue`);
+      const response = await axios.get(`https://api.arswpintudos.com//game/${roomId}/clue`);
       setClue(response.data); // Mostrar la pista obtenida desde el backend
       setHasClue(true); // Marcar que un jugador ya obtuvo la pista
     } catch (error) {
