@@ -1,0 +1,45 @@
+/* Home.css */
+.login-container {
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: linear-gradient(135deg, #6a0dad, #f7a83a, #6a0dad);
+  padding: 20px;
+}
+
+.login-card {
+  background-color: #ffffff;
+  border-radius: 16px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
+  padding: 40px 30px;
+  max-width: 400px;
+  width: 100%;
+  text-align: center;
+}
+
+.login-title {
+  font-size: 32px;
+  font-weight: bold;
+  color: #333;
+  margin-bottom: 10px; 
+font-family: 'Finger Paint', cursive;
+}
+
+.login-title span {
+  color: #7e5bef;
+font-family: 'Finger Paint', cursive;
+}
+
+.login-subtitle {
+  color: #666;
+  margin-bottom: 30px;
+  font-size: 16px;
+  font-family: 'Finger Paint', cursive;
+}
+
+.login-button {
+  display: flex;
+  justify-content: center;
+  font-family: 'Finger Paint', cursive;
+}

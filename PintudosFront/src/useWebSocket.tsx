@@ -1,52 +1,78 @@
-import React, { createContext, useContext, useEffect, useRef, useState } from "react";
+import React, {
+  createContext,
+  useContext,
+  useEffect,
+  useRef,
+  useState,
+} from "react";
 import { Client, IMessage } from "@stomp/stompjs";
 import SockJS from "sockjs-client";
-
 
 type WebSocketContextType = {
   createRoom: (roomId: string, player: string) => void;
   joinRoom: (roomId: string, player: string) => void;
-  sendMessage: (roomId: string, message: string, type?: "chat" | "trace") => void;
+  sendMessage: (
+    roomId: string,
+    message: string,
+    type?: "chat" | "trace"
+  ) => void;
   subscribeToChat: (roomId: string, callback: (msg: string) => void) => void;
   subscribeToTraces: (roomId: string, callback: (trace: any) => void) => void;
   connected: boolean;
 };
 
-
 const WebSocketContext = createContext<WebSocketContextType | null>(null);
 
-export const WebSocketProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+export const WebSocketProvider: React.FC<{ children: React.ReactNode }> = ({
+  children,
+}) => {
   const clientRef = useRef<Client | null>(null);
   const [connected, setConnected] = useState(false);
-
   useEffect(() => {
-    const client = new Client({
-      webSocketFactory: () => new SockJS("http://localhost:8080/game"),
-      reconnectDelay: 5000,
-      heartbeatIncoming: 4000,
-      heartbeatOutgoing: 4000,
-      onConnect: () => {
-        console.log("✅ Conectado a STOMP");
-        setConnected(true);
-      },
-      onDisconnect: () => {
-        console.log("❌ Desconectado de STOMP");
-        setConnected(false);
-      },
-      onStompError: (frame) => {
-        console.error('STOMP error:', frame);
-      },
-      onWebSocketError: (event) => {
-        console.error('WebSocket error:', event);
-      },
-    });
+    // Paso 1: Realizar la solicitud previa para establecer sesión
+    fetch("http://localhost:8080/game?continue", {
+      method: "GET",
+      credentials: "include", // Importante: incluir cookies
+    })
+      .then((response) => {
+        console.log("✅ Pre-autenticación completada:", response.status);
 
-    client.activate();
-    clientRef.current = client;
+        // Paso 2: Una vez que tenemos respuesta, inicializar WebSocket
+        initializeWebSocket();
+      })
+      .catch((error) => {
+        console.error("❌ Error en pre-autenticación:", error);
+      });
+    function initializeWebSocket() {
+      const client = new Client({
+        webSocketFactory: () => new SockJS("http://localhost:8080/game"),
+        reconnectDelay: 5000,
+        heartbeatIncoming: 4000,
+        heartbeatOutgoing: 4000,
+        onConnect: () => {
+          console.log("✅ Conectado a STOMP");
+          setConnected(true);
+        },
+        onDisconnect: () => {
+          console.log("❌ Desconectado de STOMP");
+          setConnected(false);
+        },
+        onStompError: (frame) => {
+          console.error("STOMP error:", frame);
+        },
+        onWebSocketError: (event) => {
+          console.error("WebSocket error:", event);
+        },
+      });
 
+      client.activate();
+      clientRef.current = client;
+    }
+
+    // Limpieza al desmontar el componente
     return () => {
-      if (client.active) {
-        client.deactivate();
+      if (clientRef.current?.active) {
+        clientRef.current.deactivate();
       }
     };
   }, []);
@@ -54,7 +80,7 @@ export const WebSocketProvider: React.FC<{ children: React.ReactNode }> = ({ chi
   const createRoom = (roomId: string, player: string) => {
     clientRef.current?.publish({
       destination: "/app/createRoom",
-      body: JSON.stringify({ roomId, player}),
+      body: JSON.stringify({ roomId, player }),
     });
   };
 
@@ -65,18 +91,17 @@ export const WebSocketProvider: React.FC<{ children: React.ReactNode }> = ({ chi
     });
   };
 
-
   const sendMessage = (
     roomId: string,
     message: string,
     type: "chat" | "trace" = "trace",
-    sender?: string 
+    sender?: string
   ) => {
     const destination =
       type === "chat" ? `/app/chat/${roomId}` : `/app/trace/${roomId}`;
-  
+
     let body;
-  
+
     if (type === "chat") {
       body = JSON.stringify({
         sender: sender ?? "Anónimo",
@@ -85,51 +110,67 @@ export const WebSocketProvider: React.FC<{ children: React.ReactNode }> = ({ chi
     } else {
       body = JSON.stringify(message);
     }
-  
-      clientRef.current?.publish({
-        destination,
-        body,
-      });
-    };
-  
-  const subscribeToPlayerCount = (roomId: string, callback: (count: number) => void) => {
-    clientRef.current?.subscribe(`/topic/room/${roomId}/players`, (msg: IMessage) => {
-      const data = JSON.parse(msg.body);
-      callback(data.players);
-      console.log("🧪 Recibido conteo de jugadores:", data);
-    });
-  };
-  
-  const subscribeToChat = (roomId: string, callback: (msg: ChatMessage) => void) => {
-    return clientRef.current?.subscribe(`/topic/chat/${roomId}`, (msg: IMessage) => {
-      const data = JSON.parse(msg.body);
-      callback(data);
+
+    clientRef.current?.publish({
+      destination,
+      body,
     });
   };
 
-  const subscribeToTraces = (roomId: string, callback: (trace: any) => void) => {
-    clientRef.current?.subscribe(`/topic/${roomId}/traces`, (message: IMessage) => {
-      const trace = JSON.parse(message.body);
-      callback(trace);
-    });
+  const subscribeToPlayerCount = (
+    roomId: string,
+    callback: (count: number) => void
+  ) => {
+    clientRef.current?.subscribe(
+      `/topic/room/${roomId}/players`,
+      (msg: IMessage) => {
+        const data = JSON.parse(msg.body);
+        callback(data.players);
+        console.log("🧪 Recibido conteo de jugadores:", data);
+      }
+    );
   };
-  
+
+  const subscribeToChat = (
+    roomId: string,
+    callback: (msg: ChatMessage) => void
+  ) => {
+    return clientRef.current?.subscribe(
+      `/topic/chat/${roomId}`,
+      (msg: IMessage) => {
+        const data = JSON.parse(msg.body);
+        callback(data);
+      }
+    );
+  };
+
+  const subscribeToTraces = (
+    roomId: string,
+    callback: (trace: any) => void
+  ) => {
+    clientRef.current?.subscribe(
+      `/topic/${roomId}/traces`,
+      (message: IMessage) => {
+        const trace = JSON.parse(message.body);
+        callback(trace);
+      }
+    );
+  };
 
   return (
     <WebSocketContext.Provider
-  value={{
-    createRoom,
-    joinRoom,
-    sendMessage,
-    subscribeToChat,
-    subscribeToTraces,
-    connected,
-    subscribeToPlayerCount,
-  }}
->
-  {children}
-</WebSocketContext.Provider>
-
+      value={{
+        createRoom,
+        joinRoom,
+        sendMessage,
+        subscribeToChat,
+        subscribeToTraces,
+        connected,
+        subscribeToPlayerCount,
+      }}
+    >
+      {children}
+    </WebSocketContext.Provider>
   );
 };
 
