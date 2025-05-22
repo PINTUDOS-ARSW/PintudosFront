@@ -30,9 +30,12 @@ export const WebSocketProvider: React.FC<{ children: React.ReactNode }> = ({
   const [connected, setConnected] = useState(false);
   useEffect(() => {
     // Paso 1: Realizar la solicitud previa para establecer sesión
-    fetch("https://api.arswpintudos.com/game?continue", {
+    const API_BASE_URL = "https://api.arswpintudos.com";
+
+    // En el fetch inicial:
+    fetch(`${API_BASE_URL}/game?continue`, {
       method: "GET",
-      credentials: "include", // Importante: incluir cookies
+      credentials: "include",
     })
       .then((response) => {
         console.log("✅ Pre-autenticación completada:", response.status);
@@ -45,7 +48,7 @@ export const WebSocketProvider: React.FC<{ children: React.ReactNode }> = ({
       });
     function initializeWebSocket() {
       const client = new Client({
-        webSocketFactory: () => new SockJS("https://api.arswpintudos.com/game"),
+        webSocketFactory: () => new SockJS(`${API_BASE_URL}/game`),
         reconnectDelay: 5000,
         heartbeatIncoming: 4000,
         heartbeatOutgoing: 4000,
